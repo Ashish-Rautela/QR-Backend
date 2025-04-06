@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel src -d lib",
     "test": "jest"
-  }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
