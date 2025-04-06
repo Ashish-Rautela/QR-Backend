@@ -11,23 +11,25 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const port = 3000;
-app.use(cors());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+// Enhanced CORS configuration
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+  setHeaders: (res) => {
+    res.set('Content-Disposition', 'attachment');
+  }
+}));
 
 const imagesDir = path.join(__dirname, 'images');
 if (!fs.existsSync(imagesDir)) {
     fs.mkdirSync(imagesDir);
 }
-const fileName = `qr_${Date.now()}.png`;
 
 app.post("/submit", (req, res) => {
     console.log("Data received:", req.body);
@@ -37,7 +39,7 @@ app.post("/submit", (req, res) => {
         return res.status(400).send("No URL provided");
     }
 
-    
+    const fileName = `qr_${Date.now()}.png`;
     const filePath = path.join(imagesDir, fileName);
 
     const qr_svg = qr.image(url, { type: "png" });
@@ -56,13 +58,6 @@ app.post("/submit", (req, res) => {
         res.status(500).send("Error generating QR code");
     });
 });
-
-app.get(`/images/${fileName}`, (req, res) => {
-  const filePath = path.join(__dirname, 'images', req.params.filename);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.sendFile(filePath);
-});
-
 
 app.listen(port, () => {
     console.log(`Server Listening on http://localhost:${port}`);
