@@ -41,7 +41,8 @@ app.post("/submit", (req, res) => {
 
     writeStream.on("finish", () => {
         console.log("QR code saved:", filePath);
-        res.send(`http:localhost:3000/images/${fileName}`); 
+        const serverUrl = `${req.protocol}://${req.get('host')}/images/${fileName}`;
+        res.send(serverUrl);
     });
 
     writeStream.on("error", (err) => {
