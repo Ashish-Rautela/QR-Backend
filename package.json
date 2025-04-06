@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
-  "start": 
   "scripts": {
+    "start": "node index.js",
     "build": "babel src -d lib",
     "test": "jest"
   },
