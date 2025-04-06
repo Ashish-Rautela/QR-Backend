@@ -21,8 +21,10 @@ app.use(cors({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'images'), {
-  setHeaders: (res) => {
+  setHeaders: (res, path) => {
     res.set('Content-Disposition', 'attachment');
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
   }
 }));
 
