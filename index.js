@@ -22,6 +22,7 @@ const imagesDir = path.join(__dirname, 'images');
 if (!fs.existsSync(imagesDir)) {
     fs.mkdirSync(imagesDir);
 }
+const fileName = `qr_${Date.now()}.png`;
 
 app.post("/submit", (req, res) => {
     console.log("Data received:", req.body);
@@ -31,7 +32,7 @@ app.post("/submit", (req, res) => {
         return res.status(400).send("No URL provided");
     }
 
-    const fileName = `qr_${Date.now()}.png`;
+    
     const filePath = path.join(imagesDir, fileName);
 
     const qr_svg = qr.image(url, { type: "png" });
@@ -50,6 +51,13 @@ app.post("/submit", (req, res) => {
         res.status(500).send("Error generating QR code");
     });
 });
+
+app.get(`/images/${fileName}`, (req, res) => {
+  const filePath = path.join(__dirname, 'images', req.params.filename);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.sendFile(filePath);
+});
+
 
 app.listen(port, () => {
     console.log(`Server Listening on http://localhost:${port}`);
